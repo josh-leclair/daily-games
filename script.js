@@ -65,6 +65,12 @@ const games = [
         url: "https://framed.wtf/", 
         cat: "Movies",
         desc: "Guess the movie from a single frame. The frames get easier with each guess." 
+    },
+    { 
+        name: "Kinda Hard Golf", 
+        url: "https://kindahardgolf.com/", 
+        cat: "Skill",
+        desc: "A daily mini-golf challenge. Drag to aim and reach the flag in as few strokes as possible." 
     }
 ];
 
@@ -179,4 +185,5 @@ document.getElementById('random-btn').onclick = () => {
 };
 
 // Initial Load
+
 render();
