@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Game Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://t2.gstatic.com" crossorigin>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="header-left">
+            <h1>Daily Launcher</h1>
+            <p class="subtitle">Your daily brain training routine</p>
+        </div>
+        
+        <div class="header-right">
+            <button id="random-btn" class="btn-action">
+                <span>🎲</span> Random Unplayed
+            </button>
+        </div>
+    </div>
+    
+    <div class="progress-wrapper">
+        <div class="progress-bg">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <div id="stats-text" class="stats-text">0 / 0 Completed</div>
+    </div>
+</header>
+
+<main id="game-grid">
+    </main>
+
+<script src="script.js"></script>
+</body>
+</html>

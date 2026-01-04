@@ -1,0 +1,172 @@
+:root {
+    --bg-color: #0f0f13;
+    --card-bg: #1c1c24;
+    --card-hover: #252530;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --accent: #6C5CE7;
+    --success: #00b894;
+    --border: #2d2d3a;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+}
+
+/* --- Header --- */
+header {
+    background: rgba(28, 28, 36, 0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 { margin: 0; font-size: 1.5rem; }
+.subtitle { margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.9rem; }
+
+.btn-action {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+.btn-action:hover { filter: brightness(1.1); }
+
+/* Progress Bar */
+.progress-wrapper {
+    max-width: 1000px;
+    margin: 15px auto 0;
+}
+.progress-bg { height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
+.stats-text { text-align: right; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; }
+
+/* --- Grid --- */
+main {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+    display: grid;
+    /* This creates a responsive grid automatically */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    align-items: start; /* Prevents cards from stretching vertically */
+}
+
+/* --- Card Styles --- */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    background-color: var(--card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* Card Header (Always Visible) */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.game-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: cover;
+    background-color: #000;
+}
+
+.game-info h3 { margin: 0; font-size: 1.1rem; }
+.game-category { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Status Badge (Checkmark) */
+.status-indicator {
+    margin-left: auto; /* Push to right */
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #2a2a35;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+.status-indicator:hover { background: #333; }
+.card.completed .status-indicator { background: var(--success); color: white; border-color: var(--success); }
+
+/* --- Expanded Content (Hidden by default) --- */
+.card-details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin 0.4s ease;
+}
+
+/* When the card has the 'expanded' class */
+.card.expanded .card-details {
+    max-height: 200px; /* Arbitrary large height */
+    opacity: 1;
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}
+
+.game-summary {
+    font-size: 0.9rem;
+    color: #ccc;
+    line-height: 1.5;
+    margin: 0 0 15px 0;
+}
+
+.play-btn {
+    display: block;
+    width: 100%;
+    background-color: var(--accent);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+.play-btn:hover { background-color: #5a4ad1; }
+
+/* Visual cue that it's completed */
+.card.completed .game-info h3 { color: var(--success); text-decoration: line-through; text-decoration-thickness: 2px;}
+.card.completed { border-color: rgba(0, 184, 148, 0.3); }
