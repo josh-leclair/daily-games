@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Bingo Generator</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        /* --- Page Layout & Controls --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 90%;
+            height: 100px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn-gen { background-color: #002060; }
+        .btn-gen:hover { background-color: #003399; }
+
+        .btn-save { background-color: #28a745; }
+        .btn-save:hover { background-color: #218838; }
+
+        /* --- The Bingo Card Visuals --- */
+        .bingo-card {
+            background-color: #002060; /* Dark Blue Background */
+            padding: 20px;
+            border-radius: 4px;
+            width: 500px;
+            /* Ensure the card layout stretches vertically to contain the grid */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-sizing: border-box; 
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .year {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .title-banner {
+            background-color: #ffe600; /* Bright Yellow */
+            color: black;
+            font-size: 40px;
+            font-weight: 900;
+            padding: 0px 30px;
+            transform: rotate(-3deg);
+            display: inline-block;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            /* FORCE 5 columns and 5 rows of equal size */
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr); 
+            gap: 8px; 
+            width: 100%;
+            /* This forces the container to be a perfect square */
+            aspect-ratio: 1 / 1; 
+        }
+
+        .square {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5px;
+            font-size: 14px; /* Adjust if text is too long */
+            font-weight: 600;
+            word-wrap: break-word;
+            line-height: 1.2;
+            height: 100%; /* Fill the grid cell height */
+            box-sizing: border-box;
+            overflow: hidden; /* Hide overflow if text is massive */
+        }
+
+        /* Checkerboard Pattern Logic */
+        .square:nth-child(odd) { background-color: #feeaa0; }
+        .square:nth-child(even) { background-color: #9cc2fa; }
+
+        /* The FREE Space Logic */
+        .square.free-space {
+            background-color: white !important;
+            flex-direction: column;
+            color: black;
+        }
+
+        .star {
+            font-size: 40px;
+            color: #ffe600;
+            line-height: 1;
+            text-shadow: 0 0 2px black;
+        }
+        
+        .free-text {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2>Bingo Generator</h2>
+        <p>Enter at least 24 items below (one per line):</p>
+        <textarea id="entriesInput" placeholder="Go to gym&#10;Read a book&#10;Drink water..."></textarea>
+        <br>
+        <div class="btn-group">
+            <button class="btn-gen" onclick="generateBingo()">Generate Card</button>
+            <button class="btn-save" onclick="downloadCard()">Download Image</button>
+        </div>
+    </div>
+
+    <div class="bingo-card" id="cardArea">
+        <div class="header">
+            <span class="year">2026</span>
+            <div class="title-banner">BINGO</div>
+        </div>
+
+        <div class="grid-container" id="grid">
+            </div>
+    </div>
+
+    <script>
+        const defaultEntries = Array.from({length: 24}, (_, i) => `Entry ${i + 1}`);
+
+        function generateBingo() {
+            const input = document.getElementById('entriesInput').value;
+            let entries = input.split('\n').map(e => e.trim()).filter(e => e);
+
+            // Fill empty slots if needed
+            if (entries.length < 24) {
+                if(entries.length === 0) {
+                    entries = defaultEntries; 
+                } else {
+                    while (entries.length < 24) {
+                        entries = entries.concat(entries);
+                    }
+                }
+            }
+
+            // Shuffle
+            for (let i = entries.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [entries[i], entries[j]] = [entries[j], entries[i]];
+            }
+
+            const grid = document.getElementById('grid');
+            grid.innerHTML = ''; 
+
+            let entryIndex = 0;
+
+            for (let i = 0; i < 25; i++) {
+                const div = document.createElement('div');
+                div.className = 'square';
+
+                // Center Square (Index 12)
+                if (i === 12) {
+                    div.classList.add('free-space');
+                    div.innerHTML = '<span class="star">★</span><span class="free-text">FREE</span>';
+                } else {
+                    div.innerText = entries[entryIndex];
+                    entryIndex++;
+                }
+                grid.appendChild(div);
+            }
+        }
+
+        function downloadCard() {
+            const cardElement = document.getElementById("cardArea");
+            
+            // Use html2canvas to capture the element
+            html2canvas(cardElement, {
+                scale: 2 // Improves resolution of the saved image
+            }).then(canvas => {
+                // Create a fake link to trigger download
+                const link = document.createElement('a');
+                link.download = 'my-bingo-card.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        // Initialize on load
+        window.onload = generateBingo;
+    </script>
+</body>
+</html>
