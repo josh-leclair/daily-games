@@ -13,44 +13,49 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 10px; /* Reduced padding for mobile */
             margin: 0;
         }
 
         .controls {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            width: 100%;
+            margin-bottom: 20px;
+            width: 95%; /* Responsive width */
             max-width: 600px;
             text-align: center;
+            box-sizing: border-box;
         }
 
         textarea {
-            width: 90%;
-            height: 100px;
+            width: 100%;
+            height: 80px;
             margin-bottom: 15px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding doesn't break width */
         }
 
         .btn-group {
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap; /* Allows buttons to stack on very small screens */
         }
 
         button {
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px; /* Larger touch targets for mobile */
             font-size: 16px;
             cursor: pointer;
             border-radius: 4px;
             font-weight: bold;
+            flex: 1; /* Buttons share space equally */
+            white-space: nowrap;
         }
 
         .btn-gen { background-color: #002060; }
@@ -61,27 +66,31 @@
 
         /* --- The Bingo Card Visuals --- */
         .bingo-card {
-            background-color: #002060; /* Dark Blue Background */
-            padding: 20px;
-            border-radius: 4px;
-            width: 500px;
-            /* Ensure the card layout stretches vertically to contain the grid */
+            background-color: #002060;
+            padding: 15px;
+            border-radius: 8px;
+            
+            /* RESPONSIVE FIXES HERE */
+            width: 95%; 
+            max-width: 500px; /* Never gets larger than 500px */
+            
             display: flex;
             flex-direction: column;
             align-items: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            box-sizing: border-box; 
+            box-sizing: border-box;
+            margin: 0 auto; /* Center it */
         }
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             position: relative;
         }
 
         .year {
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
@@ -89,11 +98,11 @@
         }
 
         .title-banner {
-            background-color: #ffe600; /* Bright Yellow */
+            background-color: #ffe600;
             color: black;
-            font-size: 40px;
+            font-size: 32px; /* Slightly smaller base size */
             font-weight: 900;
-            padding: 0px 30px;
+            padding: 0px 20px;
             transform: rotate(-3deg);
             display: inline-block;
             box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
@@ -102,13 +111,11 @@
 
         .grid-container {
             display: grid;
-            /* FORCE 5 columns and 5 rows of equal size */
             grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(5, 1fr); 
-            gap: 8px; 
+            grid-template-rows: repeat(5, 1fr);
+            gap: 6px; /* Slightly smaller gap */
             width: 100%;
-            /* This forces the container to be a perfect square */
-            aspect-ratio: 1 / 1; 
+            aspect-ratio: 1 / 1;
         }
 
         .square {
@@ -116,14 +123,17 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 5px;
-            font-size: 14px; /* Adjust if text is too long */
+            padding: 2px;
+            
+            /* Responsive Font Sizing */
+            font-size: 13px; 
+            
             font-weight: 600;
             word-wrap: break-word;
-            line-height: 1.2;
-            height: 100%; /* Fill the grid cell height */
+            line-height: 1.1;
+            height: 100%;
             box-sizing: border-box;
-            overflow: hidden; /* Hide overflow if text is massive */
+            overflow: hidden;
         }
 
         /* Checkerboard Pattern Logic */
@@ -138,16 +148,26 @@
         }
 
         .star {
-            font-size: 40px;
+            font-size: 30px; /* Adaptive size */
             color: #ffe600;
             line-height: 1;
             text-shadow: 0 0 2px black;
         }
         
         .free-text {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 900;
             text-transform: uppercase;
+        }
+
+        /* --- MOBILE SPECIFIC OVERRIDES --- */
+        @media (max-width: 400px) {
+            .bingo-card { padding: 10px; }
+            .grid-container { gap: 3px; }
+            .square { font-size: 10px; }
+            .title-banner { font-size: 24px; padding: 0 15px; }
+            .year { font-size: 16px; }
+            .star { font-size: 24px; }
         }
 
     </style>
@@ -156,12 +176,11 @@
 
     <div class="controls">
         <h2>Bingo Generator</h2>
-        <p>Enter at least 24 items below (one per line):</p>
+        <p style="margin-top:0; font-size: 0.9em; color: #555;">Enter 24 items (one per line):</p>
         <textarea id="entriesInput" placeholder="Go to gym&#10;Read a book&#10;Drink water..."></textarea>
-        <br>
         <div class="btn-group">
-            <button class="btn-gen" onclick="generateBingo()">Generate Card</button>
-            <button class="btn-save" onclick="downloadCard()">Download Image</button>
+            <button class="btn-gen" onclick="generateBingo()">Generate</button>
+            <button class="btn-save" onclick="downloadCard()">Save Image</button>
         </div>
     </div>
 
@@ -182,7 +201,6 @@
             const input = document.getElementById('entriesInput').value;
             let entries = input.split('\n').map(e => e.trim()).filter(e => e);
 
-            // Fill empty slots if needed
             if (entries.length < 24) {
                 if(entries.length === 0) {
                     entries = defaultEntries; 
@@ -193,7 +211,6 @@
                 }
             }
 
-            // Shuffle
             for (let i = entries.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [entries[i], entries[j]] = [entries[j], entries[i]];
@@ -208,7 +225,6 @@
                 const div = document.createElement('div');
                 div.className = 'square';
 
-                // Center Square (Index 12)
                 if (i === 12) {
                     div.classList.add('free-space');
                     div.innerHTML = '<span class="star">★</span><span class="free-text">FREE</span>';
@@ -223,19 +239,18 @@
         function downloadCard() {
             const cardElement = document.getElementById("cardArea");
             
-            // Use html2canvas to capture the element
+            // Increased scale to 3 for better quality when saving on mobile
             html2canvas(cardElement, {
-                scale: 2 // Improves resolution of the saved image
+                scale: 3, 
+                backgroundColor: null
             }).then(canvas => {
-                // Create a fake link to trigger download
                 const link = document.createElement('a');
-                link.download = 'my-bingo-card.png';
+                link.download = 'bingo-card.png';
                 link.href = canvas.toDataURL();
                 link.click();
             });
         }
 
-        // Initialize on load
         window.onload = generateBingo;
     </script>
 </body>
